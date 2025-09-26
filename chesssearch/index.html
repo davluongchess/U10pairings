@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kingsley Chess Proxy Example</title>
+</head>
+<body>
+<h1>Kingsley Chess Player Table</h1>
+<input type="text" id="playerName" value="Ford Cu">
+<button onclick="fetchAndDisplayPlayer(document.getElementById('playerName').value)">Fetch Results</button>
+<div id="results"></div>
+<script>
+async function fetchAndDisplayPlayer(player) {
+  document.getElementById('results').textContent = 'Loading...';
+  try {
+    const response = await fetch(`/proxy?player=${encodeURIComponent(player)}`);
+    if (!response.ok) throw new Error("Fetch failed: " + response.status);
+    const html = await response.text();
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    const table = tmp.querySelector('table');
+    if (!table) throw new Error("No table found for player results.");
+    document.getElementById('results').innerHTML = table.outerHTML;
+  } catch (error) {
+    document.getElementById('results').textContent = `Error fetching results: ${error.message}. Please try again.`;
+  }
+}
+// Initial fetch example
+document.addEventListener('DOMContentLoaded', () => { fetchAndDisplayPlayer(document.getElementById('playerName').value); });
+</script>
+</body>
+</html>
